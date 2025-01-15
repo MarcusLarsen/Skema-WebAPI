@@ -87,17 +87,25 @@ namespace Skema_WebAPI.Controllers
 
         // POST: api/Days
         [HttpPost]
-        public async Task<ActionResult<DayForSaveDTO>> PostDay(DayForSaveDTO dayDto)
+        public async Task<ActionResult<DayDTO>> PostDay(DayForSaveDTO dayDto)
         {
-            // Map the DayDTO to a Day entity
-            var day = dayDto.Adapt<Day>();
+            var subjectExists = await _context.Subject.AnyAsync(s => s.SubjectId == dayDto.SubjectId);
+            if (!subjectExists)
+            {
+                return BadRequest($"Subject with ID {dayDto.SubjectId} does not exist.");
+            }
 
-            day.Name = dayDto.Dato.DayOfWeek.ToString();
+            var teacherExists = await _context.Teachers.AnyAsync(t => t.TeacherId == dayDto.TeacherId);
+            if (!teacherExists)
+            {
+                return BadRequest($"Teacher with ID {dayDto.TeacherId} does not exist.");
+            }
+
+            var day = dayDto.Adapt<Day>();
+            day.Name = dayDto.Dato.DayOfWeek.ToString(); 
 
             _context.Day.Add(day);
             await _context.SaveChangesAsync();
-
-            // Map the saved Day entity back to a DayDTO
             var savedDayDto = day.Adapt<DayDTO>();
 
             return CreatedAtAction("GetDay", new { id = savedDayDto.DayId }, savedDayDto);

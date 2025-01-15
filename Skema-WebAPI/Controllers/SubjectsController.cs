@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Skema_WebAPI.Contexts;
 using Skema_WebAPI.Models;
+using Mapster;
+using Skema_WebAPI.DTO;
 
 namespace Skema_WebAPI.Controllers
 {
@@ -76,12 +78,41 @@ namespace Skema_WebAPI.Controllers
         // POST: api/Subjects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Subject>> PostSubject(Subject subject)
+        public async Task<ActionResult<SubjectDTO>> PostSubject(SubjectForSaveDTO subjectDto)
         {
+            var teacherExists = await _context.Teachers.AnyAsync(t => t.TeacherId == subjectDto.TeacherId);
+            if (!teacherExists)
+            {
+                return BadRequest($"Teacher with ID {subjectDto.TeacherId} does not exist.");
+            }
+
+            if (subjectDto.DayIds != null && subjectDto.DayIds.Any())
+            {
+                var invalidDayIds = subjectDto.DayIds
+                    .Where(dayId => !_context.Day.Any(d => d.DayId == dayId))
+                    .ToList();
+
+                if (invalidDayIds.Any())
+                {
+                    return BadRequest($"The following Day IDs are invalid: {string.Join(", ", invalidDayIds)}");
+                }
+            }
+
+            var subject = subjectDto.Adapt<Subject>();
+            subject.Teacher = await _context.Teachers.FindAsync(subjectDto.TeacherId);
+
+            if (subjectDto.DayIds != null && subjectDto.DayIds.Any())
+            {
+                subject.Days = await _context.Day
+                    .Where(d => subjectDto.DayIds.Contains(d.DayId))
+                    .ToListAsync();
+            }
+
             _context.Subject.Add(subject);
             await _context.SaveChangesAsync();
+            var savedSubjectDto = subject.Adapt<SubjectDTO>();
 
-            return CreatedAtAction("GetSubject", new { id = subject.SubjectId }, subject);
+            return CreatedAtAction("GetSubject", new { id = savedSubjectDto.SubjectId }, savedSubjectDto);
         }
 
         // DELETE: api/Subjects/5
