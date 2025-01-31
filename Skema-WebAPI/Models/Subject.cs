@@ -10,7 +10,10 @@ namespace Skema_WebAPI.Models
         public required bool ErTP {  get; set; }
 
         public int? TeacherId { get; set; }
+
+        [ForeignKey(nameof(TeacherId))]
         public Teacher? Teacher { get; set; }
-        public ICollection<Day>? Days { get; set; }
+
+        public List<DaySubject>? DaySubjects { get; set; }
     }
 }

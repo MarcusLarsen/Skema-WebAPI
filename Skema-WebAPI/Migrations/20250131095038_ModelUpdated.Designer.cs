@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Skema_WebAPI.Contexts;
 
@@ -11,9 +12,11 @@ using Skema_WebAPI.Contexts;
 namespace Skema_WebAPI.Migrations
 {
     [DbContext(typeof(SkemaDbContext))]
-    partial class SkemaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250131095038_ModelUpdated")]
+    partial class ModelUpdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,23 +24,6 @@ namespace Skema_WebAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Skema_WebAPI.Models.Course", b =>
-                {
-                    b.Property<int>("CourseId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CourseId"));
-
-                    b.Property<string>("CourseName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("CourseId");
-
-                    b.ToTable("Courses");
-                });
 
             modelBuilder.Entity("Skema_WebAPI.Models.Day", b =>
                 {
@@ -159,29 +145,6 @@ namespace Skema_WebAPI.Migrations
                     b.ToTable("Teachers");
                 });
 
-            modelBuilder.Entity("Skema_WebAPI.Models.TeacherCourse", b =>
-                {
-                    b.Property<int>("TeacherCourseId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TeacherCourseId"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeacherId")
-                        .HasColumnType("int");
-
-                    b.HasKey("TeacherCourseId");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("TeachersCourse");
-                });
-
             modelBuilder.Entity("Skema_WebAPI.Models.DaySubject", b =>
                 {
                     b.HasOne("Skema_WebAPI.Models.Day", "Day")
@@ -229,30 +192,6 @@ namespace Skema_WebAPI.Migrations
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("Skema_WebAPI.Models.TeacherCourse", b =>
-                {
-                    b.HasOne("Skema_WebAPI.Models.Course", "Course")
-                        .WithMany("TeacherCourses")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Skema_WebAPI.Models.Teacher", "Teacher")
-                        .WithMany("TeacherCourses")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Teacher");
-                });
-
-            modelBuilder.Entity("Skema_WebAPI.Models.Course", b =>
-                {
-                    b.Navigation("TeacherCourses");
-                });
-
             modelBuilder.Entity("Skema_WebAPI.Models.Day", b =>
                 {
                     b.Navigation("DaySubjects");
@@ -270,8 +209,6 @@ namespace Skema_WebAPI.Migrations
                     b.Navigation("DayTeachers");
 
                     b.Navigation("Subjects");
-
-                    b.Navigation("TeacherCourses");
                 });
 #pragma warning restore 612, 618
         }

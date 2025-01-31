@@ -9,6 +9,7 @@
         public int? TeacherId { get; set; } 
         public ICollection<int>? DayIds { get; set; }
     }
+
     public class SubjectForUpdateDTO : SubjectForSaveDTO
     {
         public int SubjectId { get; set; }

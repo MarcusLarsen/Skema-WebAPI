@@ -77,10 +77,10 @@ namespace Skema_WebAPI.Controllers
 
         // POST: api/Subjects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+       /* [HttpPost]
         public async Task<ActionResult<SubjectDTO>> PostSubject(SubjectForSaveDTO subjectDto)
         {
-            var teacherExists = await _context.Teachers.AnyAsync(t => t.TeacherId == subjectDto.TeacherId);
+            /*var teacherExists = await _context.Teachers.AnyAsync(t => t.TeacherId == subjectDto.TeacherId);
             if (!teacherExists)
             {
                 return BadRequest($"Teacher with ID {subjectDto.TeacherId} does not exist.");
@@ -113,7 +113,7 @@ namespace Skema_WebAPI.Controllers
             var savedSubjectDto = subject.Adapt<SubjectDTO>();
 
             return CreatedAtAction("GetSubject", new { id = savedSubjectDto.SubjectId }, savedSubjectDto);
-        }
+        }*/
 
         // DELETE: api/Subjects/5
         [HttpDelete("{id}")]

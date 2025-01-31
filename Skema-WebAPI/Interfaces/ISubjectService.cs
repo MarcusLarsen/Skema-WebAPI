@@ -1,4 +1,4 @@
-﻿namespace Skema_WebAPI.Services
+﻿namespace Skema_WebAPI.Interfaces
 {
     public interface ISubjectService
     {

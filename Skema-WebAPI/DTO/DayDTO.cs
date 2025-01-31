@@ -9,6 +9,7 @@
         public int SubjectId { get; set; }
         public int TeacherId { get; set; }
     }
+
     public class DayForUpdateDTO : DayForSaveDTO
     {
         public int DayId { get; set; }

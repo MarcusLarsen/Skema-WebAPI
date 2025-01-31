@@ -4,6 +4,7 @@
     {
        public required string Name { get; set; }
     }
+
     public class TeacherForUpdateDTO : TeacherForSaveDTO
     {
         public int TeacherId { get; set; }

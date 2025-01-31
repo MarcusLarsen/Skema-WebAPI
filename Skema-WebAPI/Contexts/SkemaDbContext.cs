@@ -13,5 +13,10 @@ namespace Skema_WebAPI.Contexts
         public DbSet<Day> Day { get; set; }
         public DbSet<Subject> Subject { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<DaySubject> DaySubjects { get; set; }
+        public DbSet<DayTeacher> DayTeachers { get; set; }
+        public DbSet<TeacherCourse> TeachersCourse { get; set; }
+
     }
 }

@@ -1,6 +1,8 @@
 
 using Microsoft.EntityFrameworkCore;
 using Skema_WebAPI.Contexts;
+using Skema_WebAPI.Interfaces;
+using Skema_WebAPI.Services;
 
 namespace Skema_WebAPI
 {
@@ -21,6 +23,10 @@ namespace Skema_WebAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<IDayService, DayService>();
+            builder.Services.AddScoped<ISubjectService, SubjectService>();
+            builder.Services.AddScoped<ITeacherService, TeacherService>();
 
             var app = builder.Build();
 
