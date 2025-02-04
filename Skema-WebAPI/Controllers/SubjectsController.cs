@@ -9,6 +9,7 @@ using Skema_WebAPI.Contexts;
 using Skema_WebAPI.Models;
 using Mapster;
 using Skema_WebAPI.DTO;
+using Skema_WebAPI.Interfaces;
 
 namespace Skema_WebAPI.Controllers
 {
@@ -16,124 +17,42 @@ namespace Skema_WebAPI.Controllers
     [ApiController]
     public class SubjectsController : ControllerBase
     {
-        private readonly SkemaDbContext _context;
+        private readonly ISubjectService _subjectService;
 
-        public SubjectsController(SkemaDbContext context)
+        public SubjectsController(ISubjectService subjectService)
         {
-            _context = context;
+            _subjectService = subjectService;
         }
 
-        // GET: api/Subjects
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Subject>>> GetSubject()
+        public async Task<IActionResult> GetAllSubjects()
         {
-            return await _context.Subject.ToListAsync();
+            var subjects = await _subjectService.GetAllSubjectsAsync();
+            return Ok(subjects);
         }
 
-        // GET: api/Subjects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Subject>> GetSubject(int id)
+        public async Task<IActionResult> GetSubjectById(int subjectId)
         {
-            var subject = await _context.Subject.FindAsync(id);
-
-            if (subject == null)
-            {
-                return NotFound();
-            }
-
-            return subject;
+            var subject = await _subjectService.GetSubjectByIdAsync(subjectId);
+            if (subject == null) return NotFound();
+            return Ok(subject);
         }
 
-        // PUT: api/Subjects/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubject(int id, Subject subject)
+        [HttpPost]
+        public async Task<IActionResult> AddCourse([FromBody] SubjectDTO subjectDto)
         {
-            if (id != subject.SubjectId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(subject).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SubjectExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            if (subjectDto == null) return BadRequest();
+            var createdSubject = await _subjectService.AddSubjectAsync(subjectDto);
+            return CreatedAtAction(nameof(GetSubjectById), new { id = createdSubject.SubjectId });
         }
 
-        // POST: api/Subjects
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-       /* [HttpPost]
-        public async Task<ActionResult<SubjectDTO>> PostSubject(SubjectForSaveDTO subjectDto)
-        {
-            /*var teacherExists = await _context.Teachers.AnyAsync(t => t.TeacherId == subjectDto.TeacherId);
-            if (!teacherExists)
-            {
-                return BadRequest($"Teacher with ID {subjectDto.TeacherId} does not exist.");
-            }
-
-            if (subjectDto.DayIds != null && subjectDto.DayIds.Any())
-            {
-                var invalidDayIds = subjectDto.DayIds
-                    .Where(dayId => !_context.Day.Any(d => d.DayId == dayId))
-                    .ToList();
-
-                if (invalidDayIds.Any())
-                {
-                    return BadRequest($"The following Day IDs are invalid: {string.Join(", ", invalidDayIds)}");
-                }
-            }
-
-            var subject = subjectDto.Adapt<Subject>();
-            subject.Teacher = await _context.Teachers.FindAsync(subjectDto.TeacherId);
-
-            if (subjectDto.DayIds != null && subjectDto.DayIds.Any())
-            {
-                subject.Days = await _context.Day
-                    .Where(d => subjectDto.DayIds.Contains(d.DayId))
-                    .ToListAsync();
-            }
-
-            _context.Subject.Add(subject);
-            await _context.SaveChangesAsync();
-            var savedSubjectDto = subject.Adapt<SubjectDTO>();
-
-            return CreatedAtAction("GetSubject", new { id = savedSubjectDto.SubjectId }, savedSubjectDto);
-        }*/
-
-        // DELETE: api/Subjects/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSubject(int id)
+        public async Task<IActionResult> DeleteSubject(int subjectId)
         {
-            var subject = await _context.Subject.FindAsync(id);
-            if (subject == null)
-            {
-                return NotFound();
-            }
-
-            _context.Subject.Remove(subject);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool SubjectExists(int id)
-        {
-            return _context.Subject.Any(e => e.SubjectId == id);
+            var result = await _subjectService.DeleteSubjectAsync(subjectId);
+            if (!result) return NotFound();
+            return Ok("Subject Has Been Deleted Successfully");
         }
     }
 }

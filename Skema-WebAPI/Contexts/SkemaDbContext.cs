@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Skema_WebAPI.Models;
 
 namespace Skema_WebAPI.Contexts
 {
-    public class SkemaDbContext : DbContext
+    public class SkemaDbContext : IdentityDbContext<User>
     {
         public SkemaDbContext(DbContextOptions options) : base(options)
         {
@@ -16,7 +17,6 @@ namespace Skema_WebAPI.Contexts
         public DbSet<Course> Courses { get; set; }
         public DbSet<DaySubject> DaySubjects { get; set; }
         public DbSet<DayTeacher> DayTeachers { get; set; }
-        public DbSet<TeacherCourse> TeachersCourse { get; set; }
-
+        public DbSet<TeacherCourse> TeachersCourses { get; set; }
     }
 }

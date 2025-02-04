@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Skema_WebAPI.Contexts;
+using Skema_WebAPI.DTO;
+using Skema_WebAPI.Interfaces;
 using Skema_WebAPI.Models;
 
 namespace Skema_WebAPI.Controllers
@@ -14,95 +16,42 @@ namespace Skema_WebAPI.Controllers
     [ApiController]
     public class TeachersController : ControllerBase
     {
-        private readonly SkemaDbContext _context;
+        private readonly ITeacherService _teacherService;
 
-        public TeachersController(SkemaDbContext context)
+        public TeachersController(ITeacherService teacherService)
         {
-            _context = context;
+            _teacherService = teacherService;
         }
 
-        // GET: api/Teachers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Teacher>>> GetTeachers()
+        public async Task<IActionResult> GetAllTeachers()
         {
-            return await _context.Teachers.ToListAsync();
+            var teachers = await _teacherService.GetAllTeachersAsync();
+            return Ok(teachers);
         }
 
-        // GET: api/Teachers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Teacher>> GetTeacher(int id)
+        public async Task<IActionResult> GetTeacherById(int teacherId)
         {
-            var teacher = await _context.Teachers.FindAsync(id);
-
-            if (teacher == null)
-            {
-                return NotFound();
-            }
-
-            return teacher;
+            var teacher = await _teacherService.GetTeacherByIdAsync(teacherId);
+            if (teacher == null) return NotFound();
+            return Ok(teacher);
         }
 
-        // PUT: api/Teachers/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTeacher(int id, Teacher teacher)
-        {
-            if (id != teacher.TeacherId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(teacher).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TeacherExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Teachers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Teacher>> PostTeacher(Teacher teacher)
+        public async Task<IActionResult> AddTeacher([FromBody] TeacherDTO teacherDto)
         {
-            _context.Teachers.Add(teacher);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTeacher", new { id = teacher.TeacherId }, teacher);
+            if (teacherDto == null) return BadRequest();
+            var createdTeacher = await _teacherService.AddTeacherAsync(teacherDto);
+            return CreatedAtAction(nameof(GetTeacherById), new {id = createdTeacher.TeacherId});
         }
 
-        // DELETE: api/Teachers/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTeacher(int id)
+        public async Task<IActionResult> DeleteTeacher(int teacherId)
         {
-            var teacher = await _context.Teachers.FindAsync(id);
-            if (teacher == null)
-            {
-                return NotFound();
-            }
-
-            _context.Teachers.Remove(teacher);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool TeacherExists(int id)
-        {
-            return _context.Teachers.Any(e => e.TeacherId == id);
+            var result = await _teacherService.DeleteTeacherAsync(teacherId);
+            if (!result) return NotFound();
+            return Ok("Teacher Has Been Deleted Successfully");
         }
     }
 }
