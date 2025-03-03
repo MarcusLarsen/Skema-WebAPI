@@ -1,4 +1,3 @@
-
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -20,39 +19,38 @@ namespace Skema_WebAPI
             // Add services to the container.
             builder.Services.AddDbContext<SkemaDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetSection
-                    ("ConnectionStrings:DefaultConnection").Value);
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            // Identity setup
             builder.Services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<SkemaDbContext>()
                 .AddDefaultTokenProviders();
 
-            var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+            // JWT Authentication setup
+            var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is missing"));
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true
-                };
-            });
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = true,   // Change this to false if you don’t have an issuer
+                        ValidateAudience = true, // Change this to false if you don’t have an audience
+                        ValidateLifetime = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"]
+                    };
+                });
 
             builder.Services.AddAuthorization();
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Register services
             builder.Services.AddScoped<IDayService, DayService>();
             builder.Services.AddScoped<ISubjectService, SubjectService>();
             builder.Services.AddScoped<ITeacherService, TeacherService>();
@@ -60,7 +58,6 @@ namespace Skema_WebAPI
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -69,8 +66,8 @@ namespace Skema_WebAPI
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 

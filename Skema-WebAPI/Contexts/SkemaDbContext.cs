@@ -5,7 +5,7 @@ using Skema_WebAPI.Models;
 
 namespace Skema_WebAPI.Contexts
 {
-    public class SkemaDbContext : IdentityDbContext<User>
+    public class SkemaDbContext : IdentityDbContext<Skema_WebAPI.Models.User>
     {
         public SkemaDbContext(DbContextOptions options) : base(options)
         {

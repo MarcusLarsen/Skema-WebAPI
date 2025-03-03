@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Skema_WebAPI.Contexts;
 
@@ -11,9 +12,11 @@ using Skema_WebAPI.Contexts;
 namespace Skema_WebAPI.Migrations
 {
     [DbContext(typeof(SkemaDbContext))]
-    partial class SkemaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250224114416_UpdatedSkemaDBContextAgain")]
+    partial class UpdatedSkemaDBContextAgain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
