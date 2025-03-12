@@ -12,7 +12,7 @@
 
     public class CourseDTO : CourseForUpdateDTO
     {
-
+        public DayDTOMinusRelations? Day { get; set; }
     }
 
     public class CourseDTOMinusRelations : CourseForUpdateDTO

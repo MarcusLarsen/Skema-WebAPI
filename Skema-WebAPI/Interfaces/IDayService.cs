@@ -9,5 +9,6 @@ namespace Skema_WebAPI.Interfaces
         Task<DayDTO> GetDayByIdAsync(int dayId);
         Task<DayDTO> AddDayAsync(DayDTO dayDto);
         Task<bool> DeleteDayAsync(int dayId);
+        Task<IEnumerable<DayDTO>> GetScheduleByCourseAsync(string course);
     }
 }

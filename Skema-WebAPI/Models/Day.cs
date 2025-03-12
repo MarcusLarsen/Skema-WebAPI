@@ -11,6 +11,10 @@ namespace Skema_WebAPI.Models
         public required int TP_Timer { get; set; }
         public required int FagFaglige_Timer { get; set; }
 
+
+        public int CourseId { get; set; }  
+        public Course? Course { get; set; } 
+
         public ICollection<DaySubject>? DaySubjects { get; set; }
         public ICollection<DayTeacher>? DayTeachers { get; set; }
     }

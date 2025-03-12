@@ -40,6 +40,18 @@ namespace Skema_WebAPI.Controllers
             return Ok(day);
         }
 
+        [HttpGet("schedule")]
+        public async Task<IActionResult> GetScheduleByCourse([FromQuery] string course)
+        {
+            if (string.IsNullOrEmpty(course)) return BadRequest("Course name is required.");
+
+            var schedule = await _dayservice.GetScheduleByCourseAsync(course);
+            if (schedule == null) return NotFound("No schedule found for this course.");
+
+            return Ok(schedule);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> AddDay([FromBody] DayDTO dayDto)
         {

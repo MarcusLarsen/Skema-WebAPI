@@ -36,6 +36,15 @@ namespace Skema_WebAPI.Services
             await _context.SaveChangesAsync();
             return day.Adapt<DayDTO>();
         }
+        public async Task<IEnumerable<DayDTO>> GetScheduleByCourseAsync(string course)
+        {
+            var schedule = await _context.Day
+                .Where(d => d.Course.CourseName == course) 
+                .ToListAsync();
+
+            return schedule.Select(d => d.Adapt<DayDTO>());
+        }
+
 
         public async Task<bool> DeleteDayAsync(int dayId)
         {

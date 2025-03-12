@@ -15,8 +15,6 @@ namespace Skema_WebAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
             builder.Services.AddDbContext<SkemaDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -46,6 +44,15 @@ namespace Skema_WebAPI
 
             builder.Services.AddAuthorization();
 
+            // Add CORS configuration
+           /* builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowVueApp",
+                    policy => policy.WithOrigins("http://localhost:5173")  // Allow the Vue app origin
+                                   .AllowAnyHeader()
+                                   .AllowAnyMethod());
+            });*/
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -65,6 +72,13 @@ namespace Skema_WebAPI
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            });
 
             app.UseAuthentication();
             app.UseAuthorization();

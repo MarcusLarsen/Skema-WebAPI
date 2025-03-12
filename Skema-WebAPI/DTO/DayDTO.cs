@@ -18,6 +18,7 @@
     public class DayDTO : DayForUpdateDTO
     {
         public SubjectDTOMinusRelations? Subject { get; set; }
+        public CourseDTOMinusRelations? Course { get; set; }
     }
 
     public class DayDTOMinusRelations : DayForUpdateDTO
