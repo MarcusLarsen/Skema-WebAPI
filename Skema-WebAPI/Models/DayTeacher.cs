@@ -8,13 +8,9 @@ namespace Skema_WebAPI.Models
         public int DayTeacherId { get; set; }
 
         public int DayId { get; set; }
-
-        [ForeignKey(nameof(DayId))]
         public Day? Day { get; set; }
 
         public int TeacherId { get; set; }
-
-        [ForeignKey(nameof(TeacherId))]
         public Teacher? Teacher { get; set; }
     }
 }

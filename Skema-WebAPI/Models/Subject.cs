@@ -7,7 +7,7 @@ namespace Skema_WebAPI.Models
         public int SubjectId { get; set; }
         public required string Name { get; set; }
         public required int SamletTimer { get; set; }
-        public required bool ErTP {  get; set; }
+        public required bool ErTP { get; set; }
 
         public int? TeacherId { get; set; }
 

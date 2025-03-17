@@ -44,15 +44,6 @@ namespace Skema_WebAPI
 
             builder.Services.AddAuthorization();
 
-            // Add CORS configuration
-           /* builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowVueApp",
-                    policy => policy.WithOrigins("http://localhost:5173")  // Allow the Vue app origin
-                                   .AllowAnyHeader()
-                                   .AllowAnyMethod());
-            });*/
-
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -62,6 +53,7 @@ namespace Skema_WebAPI
             builder.Services.AddScoped<ISubjectService, SubjectService>();
             builder.Services.AddScoped<ITeacherService, TeacherService>();
             builder.Services.AddScoped<ICourseService, CourseService>();
+            builder.Services.AddScoped<IScheduleService, ScheduleService>();
 
             var app = builder.Build();
 

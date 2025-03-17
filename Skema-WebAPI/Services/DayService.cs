@@ -39,11 +39,39 @@ namespace Skema_WebAPI.Services
         public async Task<IEnumerable<DayDTO>> GetScheduleByCourseAsync(string course)
         {
             var schedule = await _context.Day
-                .Where(d => d.Course.CourseName == course) 
+                .Where(d => d.Course.CourseName == course)
                 .ToListAsync();
+
+            if (schedule == null || !schedule.Any())
+            {
+                // Return mock data hvis der ikke findes noget i databasen
+                return GetMockSchedule(course);
+            }
 
             return schedule.Select(d => d.Adapt<DayDTO>());
         }
+
+        // Flyt denne metode til din service eller en helper-klasse
+        private IEnumerable<DayDTO> GetMockSchedule(string course)
+        {
+            var mockSchedule = new List<DayDTO>();
+
+            if (course == "H1")
+            {
+                mockSchedule.Add(new DayDTO
+                {
+                    Dato = DateTime.UtcNow,
+                    Subjects = new List<SubjectForSaveDTO>
+            {
+                new SubjectDTO { Name = "Mathematics", StartDate = DateTime.Parse("2025-03-17T08:00:00"), EndDate = DateTime.Parse("2025-03-17T10:00:00") },
+                new SubjectDTO { Name = "Physics", StartDate = DateTime.Parse("2025-03-17T10:30:00"), EndDate = DateTime.Parse("2025-03-17T12:00:00") }
+            }
+                });
+            }
+
+            return mockSchedule;
+        }
+
 
 
         public async Task<bool> DeleteDayAsync(int dayId)

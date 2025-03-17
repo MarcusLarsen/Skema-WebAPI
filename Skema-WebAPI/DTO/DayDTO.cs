@@ -2,12 +2,15 @@
 {
     public class DayForSaveDTO
     {
-        public required DateTime Dato { get; set; }
-        public required int Samlet_Timer { get; set; }
-        public required int TP_Timer { get; set; }
-        public required int FagFaglige_Timer { get; set; }
-        public int SubjectId { get; set; }
-        public int TeacherId { get; set; }
+        public string Name { get; set; }
+        public DateTime Dato { get; set; }
+        public int Samlet_Timer { get; set; }
+        public int TP_Timer { get; set; }
+        public int FagFaglige_Timer { get; set; }
+
+
+        public List<SubjectForSaveDTO> Subjects { get; set; } = new List<SubjectForSaveDTO>();
+        public int CourseId { get; set; }
     }
 
     public class DayForUpdateDTO : DayForSaveDTO
@@ -17,12 +20,12 @@
 
     public class DayDTO : DayForUpdateDTO
     {
-        public SubjectDTOMinusRelations? Subject { get; set; }
         public CourseDTOMinusRelations? Course { get; set; }
+        public List<DaySubjectDTO> DaySubjects { get; set; } = new();
+        public List<DayTeacherDTO> DayTeachers { get; set; } = new();
     }
 
     public class DayDTOMinusRelations : DayForUpdateDTO
     {
-
     }
 }
